@@ -36,10 +36,12 @@ function getSkuFromProductItem(item) {
 }
 
 // 3. Remova o item do carrinho de compras ao clicar nele
-function cartItemClickListener(event, sku) {
+function cartItemClickListener(event, sku, salePrice) {
   event.target.remove();
 
   localStorage.removeItem(sku);
+
+  updateCartTotalPrice(salePrice, '-');
 }
 
 function createCartItemElement({ sku, name, salePrice }) {
@@ -47,11 +49,45 @@ function createCartItemElement({ sku, name, salePrice }) {
   li.className = 'cart__item';
   li.innerText = `SKU: ${sku} | NAME: ${name} | PRICE: $${salePrice}`;
   li.addEventListener('click', (event) => 
-    cartItemClickListener(event, sku));
+    cartItemClickListener(event, sku, salePrice));
   return li;
 }
 
+//5. Some o valor total dos itens do carrinho de compras
+function createCartTotalPrice(){
+  const labelTotalPrice = document.createElement('span');
+  labelTotalPrice.className = 'label-total-price';
+  labelTotalPrice.innerText = 'Subtotal: R$ '
 
+  const cart = document.querySelector('.cart');
+  cart.insertBefore(labelTotalPrice, cart.childNodes[2]);
+
+  const cartTotalPrice = document.createElement('span');
+	cartTotalPrice.className = 'total-price';
+
+  return cartTotalPrice;
+}
+
+async function updateCartTotalPrice(totalPrice, op){
+  const cartTotalPrice = document.querySelector('.total-price');
+
+  if(cartTotalPrice.textContent.toString() === ""){
+    cartTotalPrice.innerText = totalPrice;
+  }
+  else{
+    let newPrice = parseFloat(cartTotalPrice.innerText);
+    if(op === '+')
+      newPrice += await parseFloat(totalPrice);
+    else
+      newPrice -= await parseFloat(totalPrice);
+
+    cartTotalPrice.innerText = newPrice ;
+  }
+
+  return cartTotalPrice;
+}
+
+//4. Carregue o carrinho de compras através do LocalStorage ao iniciar a página
 function allItemsStorage() {
   let totalPrice = 0
 
@@ -67,6 +103,8 @@ function allItemsStorage() {
     };
     document.querySelector('.cart__items').appendChild(createCartItemElement(itemData));
   }
+
+  updateCartTotalPrice(totalPrice);
 }
 
 // 2. Adicione o produto ao carrinho de compras
@@ -81,6 +119,8 @@ async function addItemsCart(sku) {
 
   if(!localStorage.getItem(itemData.sku)){
     document.querySelector('.cart__items').appendChild(createCartItemElement(itemData));
+
+    updateCartTotalPrice(price, '+');
   }
 
   localStorage.setItem(itemData.sku, JSON.stringify(itemData));
@@ -100,6 +140,9 @@ async function getItems(query) {
     document.querySelector('.items')
     .appendChild(createProductItemElement(itemData));
   });
+
+  const cart = document.querySelector('.cart');
+  cart.insertBefore(createCartTotalPrice(), cart.childNodes[3] );
 
   allItemsStorage();
 }
