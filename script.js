@@ -149,4 +149,16 @@ async function getItems(query) {
 
 window.onload = () => { 
   getItems('computador');
+
+  //6. Crie um botão para limpar carrinho de compras
+  const cleanCart = document.querySelector('.empty-cart');
+
+  cleanCart.addEventListener('click', () => {
+    const cartTotalPrice = document.querySelector('.total-price');
+    cartTotalPrice.innerText = "0.00";
+    
+    document.querySelectorAll('.cart__item').forEach((item) => item.remove());
+    
+    localStorage.clear()
+  });
 };
