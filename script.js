@@ -14,6 +14,44 @@ function createCustomElement(element, className, innerText) {
   return e;
 }
 
+async function updateCartTotalPrice(totalPrice, op){
+  const cartTotalPrice = document.querySelector('.total-price');
+
+  if(cartTotalPrice.textContent.toString() === ""){
+    cartTotalPrice.innerText = totalPrice;
+  }
+  else{
+    let newPrice = parseFloat(cartTotalPrice.innerText);
+    if(op === '+')
+      newPrice += await parseFloat(totalPrice);
+    else
+      newPrice -= await parseFloat(totalPrice);
+
+    cartTotalPrice.innerText = newPrice ;
+  }
+
+  return cartTotalPrice;
+}
+
+// 2. Adicione o produto ao carrinho de compras
+async function addItemsCart(sku) {
+  const item = await (await fetch(`${URL}/items/${sku}`)).json();
+  const { title, price } = item;
+  const itemData = {
+    sku,
+    name: title,
+    salePrice: price,
+  };
+
+  if(!localStorage.getItem(itemData.sku)){
+    document.querySelector('.cart__items').appendChild(createCartItemElement(itemData));
+
+    updateCartTotalPrice(price, '+');
+  }
+
+  localStorage.setItem(itemData.sku, JSON.stringify(itemData));
+}
+
 function createProductItemElement({ sku, name, image }) {
   const section = document.createElement('section');
   section.className = 'item';
@@ -68,35 +106,16 @@ function createCartTotalPrice(){
   return cartTotalPrice;
 }
 
-async function updateCartTotalPrice(totalPrice, op){
-  const cartTotalPrice = document.querySelector('.total-price');
-
-  if(cartTotalPrice.textContent.toString() === ""){
-    cartTotalPrice.innerText = totalPrice;
-  }
-  else{
-    let newPrice = parseFloat(cartTotalPrice.innerText);
-    if(op === '+')
-      newPrice += await parseFloat(totalPrice);
-    else
-      newPrice -= await parseFloat(totalPrice);
-
-    cartTotalPrice.innerText = newPrice ;
-  }
-
-  return cartTotalPrice;
-}
-
 //4. Carregue o carrinho de compras através do LocalStorage ao iniciar a página
 function allItemsStorage() {
   let totalPrice = 0
 
   for(var i=0; i<localStorage.length; i++) {
-    let key = localStorage.key(i);
-    let pull = (JSON.parse(localStorage.getItem(key)));
+    const key = localStorage.key(i);
+    const pull = (JSON.parse(localStorage.getItem(key)));
     
     totalPrice += pull.salePrice;
-    let itemData = {
+    const itemData = {
       sku: pull.sku,
       name: pull.name,
       salePrice: pull.salePrice,
@@ -105,25 +124,6 @@ function allItemsStorage() {
   }
 
   updateCartTotalPrice(totalPrice);
-}
-
-// 2. Adicione o produto ao carrinho de compras
-async function addItemsCart(sku) {
-  const item = await (await fetch(`${URL}/items/${sku}`)).json();
-  const { title, price } = item;
-  const itemData = {
-    sku,
-    name: title,
-    salePrice: price,
-  };
-
-  if(!localStorage.getItem(itemData.sku)){
-    document.querySelector('.cart__items').appendChild(createCartItemElement(itemData));
-
-    updateCartTotalPrice(price, '+');
-  }
-
-  localStorage.setItem(itemData.sku, JSON.stringify(itemData));
 }
 
 //1. Crie uma listagem de produtos
