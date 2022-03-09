@@ -126,6 +126,16 @@ function allItemsStorage() {
   updateCartTotalPrice(totalPrice);
 }
 
+//7. Adicione um texto de "loading" durante uma requisição à API
+function createLoading(){
+  const loading = document.createElement('span');
+  loading.className = 'loading';
+  loading.innerText = 'loading...';
+
+  itemsContainer = document.querySelector('.items');
+  itemsContainer.appendChild(loading);
+}
+
 //1. Crie uma listagem de produtos
 async function getItems(query) {
   const itemsJson = await (await fetch(`${URL}/sites/MLB/search?q=${query}`)).json();
@@ -141,6 +151,9 @@ async function getItems(query) {
     .appendChild(createProductItemElement(itemData));
   });
 
+  if(document.querySelector('.loading'))
+    document.querySelector('.loading').remove();
+
   const cart = document.querySelector('.cart');
   cart.insertBefore(createCartTotalPrice(), cart.childNodes[3] );
 
@@ -148,6 +161,8 @@ async function getItems(query) {
 }
 
 window.onload = () => { 
+  createLoading();
+
   getItems('computador');
 
   //6. Crie um botão para limpar carrinho de compras
