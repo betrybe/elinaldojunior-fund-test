@@ -8,6 +8,7 @@
   display: flex;
   justify-content: start; 
   width: 100%;
+  font-family: 'Trebuchet MS', sans-serif;
 }
 
 .items {
@@ -27,6 +28,7 @@
   height: auto;
   margin: 5px;
   width: 200px;
+  padding: 7px;
 }
 
 .item .item__sku {
@@ -37,6 +39,7 @@
   flex-grow: 1;
   padding: 10px;
   text-align: center;
+  color: #00aabb;
 }
 
 .item .item__image {
@@ -44,11 +47,16 @@
 }
 
 .item .item__add {
-  background-color: #fff159;
+  background-color: #fad129;
   border: 0;
+  border-radius: 5px;
   cursor: pointer;
   margin: 0;
   padding: 5px;
+  transition-duration: 0.5s;
+}
+.item .item__add:hover {
+  background-color: #fab129;
 }
 
 .cart {
@@ -68,4 +76,40 @@
   flex-basis: 1;
   font-size: 16pt;
   text-align: center;
+}
+
+.empty-cart{
+  background-color: #ee6600;
+  border: 0;
+  padding: 5px;
+  margin: 20px 0;
+  border-radius: 5px;
+  cursor: pointer;
+  transition-duration: 0.5s;
+}
+
+.empty-cart:hover{
+  background-color: #ee5500;
+}
+
+.label-total-price, .total-price{
+  color: #555;
+  font-weight: bold;
+}
+
+.total-price{
+  font-size: 18px;
+}
+
+.cart__items{
+  padding: 5px;
+}
+
+.cart__item{
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: #ddd 0 0 5px;
+  margin: 10px 5px;
+  list-style: none;
+  color: #555;
 }
