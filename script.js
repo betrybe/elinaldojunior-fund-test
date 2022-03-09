@@ -35,17 +35,21 @@ function getSkuFromProductItem(item) {
   return item.querySelector('span.item__sku').innerText;
 }
 
+// 3. Remova o item do carrinho de compras ao clicar nele
 function cartItemClickListener(event) {
-  // coloque seu código aqui
+  event.target.remove();
 }
 
 function createCartItemElement({ sku, name, salePrice }) {
   const li = document.createElement('li');
   li.className = 'cart__item';
   li.innerText = `SKU: ${sku} | NAME: ${name} | PRICE: $${salePrice}`;
-  li.addEventListener('click', cartItemClickListener);
+  li.addEventListener('click', (event) => 
+    cartItemClickListener(event));
   return li;
 }
+
+
 
 // 2. Adicione o produto ao carrinho de compras
 async function addItemsCart(sku) {
